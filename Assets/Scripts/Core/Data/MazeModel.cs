@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Maze.Core.Data
@@ -8,6 +6,6 @@ namespace Maze.Core.Data
     public class MazeModel : ScriptableObject
     {
         [field: SerializeField] public Vector2Int Size { get; private set; } = new(10, 10);
-        [field: SerializeField] public int ExitsCount { get; private set; } = 3;
+        [field: SerializeField, Min(1)] public int ExitsCount { get; private set; } = 3;
     }
 }
