@@ -17,7 +17,7 @@ namespace Maze.Core
         public MazeNode CentralNode { get; private set; }
         #endregion
 
-        private void Start()
+        private void Awake()
         {
             GenerateMaze();
         }
