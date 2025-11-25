@@ -1,12 +1,14 @@
 using Maze.Core;
 using Maze.Player.Components;
+using Maze.Player.Data;
 using UnityEngine;
 using Zenject;
 
-namespace Maze
+namespace Maze.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        [SerializeField] private PlayerModel model;
         [SerializeField] private PlayerMovementComponent movementComponent;
         [SerializeField] private PlayerAnimatorComponent animatorComponent;
 
@@ -19,6 +21,8 @@ namespace Maze
         {
             _transform = transform;
             _transform.position = _mazeController.CentralNode.transform.position;
+
+            movementComponent.Init(model, _transform);
         }
 
         private void Update()

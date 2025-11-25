@@ -2,20 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Maze
+namespace Maze.Player.Data
 {
-    public class PlayerModel : MonoBehaviour
+    [CreateAssetMenu(fileName = "PlayerModel", menuName = "ScriptableObjects/PlayerData/PlayerModel")]
+    public class PlayerModel : ScriptableObject
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
-        }
+        [field: SerializeField] public float Speed { get; private set; } = 5f;
     }
 }

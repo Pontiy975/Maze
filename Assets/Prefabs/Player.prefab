@@ -47,6 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e8ca0d8ae21144a93e0f425013380d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  model: {fileID: 11400000, guid: 1e72f527f7f106d44a0816e3b89d5e6b, type: 2}
   movementComponent: {fileID: 2220923693126892844}
   animatorComponent: {fileID: 4695623645899631645}
 --- !u!114 &4695623645899631645
