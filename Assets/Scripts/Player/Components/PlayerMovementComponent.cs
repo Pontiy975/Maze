@@ -25,6 +25,7 @@ namespace Maze.Player.Components
         [SerializeField] private LayerMask groundLayer;
 
         private PlayerModel _model;
+        private MazeController _mazeController;
         private Transform _transform;
         private bool _isInitialized;
 
@@ -41,9 +42,10 @@ namespace Maze.Player.Components
             _transform = transform;
         }
 
-        public void Init(PlayerModel model)
+        public void Init(PlayerModel model, MazeController mazeController)
         {
             _model = model;
+            _mazeController = mazeController;
             _isInitialized = true;
         }
 
@@ -68,6 +70,7 @@ namespace Maze.Player.Components
                 return;
             
             _transform.Translate(_model.Speed * Time.deltaTime * direction);
+            DetectNode();
         }
 
         private void SetDirection()
@@ -106,6 +109,12 @@ namespace Maze.Player.Components
         private bool RaycastForward(Vector2 direction)
         {
             return Physics2D.RaycastNonAlloc(_transform.position, direction, _forwardHits, RAYCAST_DISTANCE, wallLayer) > 0;
+        }
+
+        private void DetectNode()
+        {
+            if (_mazeController.TryGetNodeAtWorldPosition(_transform.position, out MazeNode node))
+                node.SetState(NodeState.Player);
         }
     }
 }

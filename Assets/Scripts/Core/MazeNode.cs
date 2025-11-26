@@ -6,7 +6,8 @@ namespace Maze.Core
     public enum NodeState
     {
         Available,
-        Visited
+        Visited,
+        Player
     }
 
     public class MazeNode : MonoBehaviour
@@ -31,7 +32,12 @@ namespace Maze.Core
         #endregion
 
         public void SetPosition(Vector2Int position) => Position = position;
-        public void SetState(NodeState state) => State = state;
+        public void SetState(NodeState state)
+        {
+            if (state == NodeState.Player)
+                sprite.color = Color.red;
+            State = state;
+        }
 
         public void Connect(MazeNode node)
         {
