@@ -1,3 +1,4 @@
+using Maze.Core;
 using Maze.Player.Data;
 using UnityEngine;
 
@@ -14,20 +15,35 @@ namespace Maze.Player.Components
 
     public class PlayerMovementComponent : MonoBehaviour
     {
+        #region Const
         private const string HORIZONTAL_AXIS = "Horizontal";
         private const string VERTICAL_AXIS = "Vertical";
+        private const float RAYCAST_DISTANCE = 0.25f;
+        #endregion
+
+        [SerializeField] private LayerMask wallLayer;
+        [SerializeField] private LayerMask groundLayer;
 
         private PlayerModel _model;
         private Transform _transform;
-
-        public MovementDirection Direction { get; private set; } = MovementDirection.None;
-
         private bool _isInitialized;
 
-        public void Init(PlayerModel model, Transform transform)
+        #region Properties
+        public MovementDirection Direction { get; private set; } = MovementDirection.None;
+        public MazeNode CurrentNode { get; private set; }
+        #endregion
+
+        private readonly RaycastHit2D[] _forwardHits = new RaycastHit2D[1];
+        private readonly RaycastHit2D[] _downHits = new RaycastHit2D[1];
+
+        private void Awake()
+        {
+            _transform = transform;
+        }
+
+        public void Init(PlayerModel model)
         {
             _model = model;
-            _transform = transform;
             _isInitialized = true;
         }
 
@@ -43,15 +59,14 @@ namespace Maze.Player.Components
 
             SetDirection();
 
-            Vector2 direction = Direction switch
-            {
-                MovementDirection.Up => Vector2.up,
-                MovementDirection.Down => Vector2.down,
-                MovementDirection.Left => Vector2.left,
-                MovementDirection.Right => Vector2.right,
-                _ => Vector2.zero
-            };
+            if (Direction == MovementDirection.None)
+                return;
 
+            Vector2 direction = GetDirectionVector();
+            
+            if (RaycastForward(direction))
+                return;
+            
             _transform.Translate(_model.Speed * Time.deltaTime * direction);
         }
 
@@ -74,6 +89,23 @@ namespace Maze.Player.Components
 
             if (horizontal != 0)
                 Direction = horizontal > 0 ? MovementDirection.Right : MovementDirection.Left;
+        }
+
+        private Vector2 GetDirectionVector()
+        {
+            return Direction switch
+            {
+                MovementDirection.Up => Vector2.up,
+                MovementDirection.Down => Vector2.down,
+                MovementDirection.Left => Vector2.left,
+                MovementDirection.Right => Vector2.right,
+                _ => Vector2.zero
+            };
+        }
+
+        private bool RaycastForward(Vector2 direction)
+        {
+            return Physics2D.RaycastNonAlloc(_transform.position, direction, _forwardHits, RAYCAST_DISTANCE, wallLayer) > 0;
         }
     }
 }

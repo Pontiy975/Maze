@@ -22,7 +22,7 @@ namespace Maze.Player
             _transform = transform;
             _transform.position = _mazeController.CentralNode.transform.position;
 
-            movementComponent.Init(model, _transform);
+            movementComponent.Init(model);
         }
 
         private void Update()
