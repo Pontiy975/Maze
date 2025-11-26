@@ -2,6 +2,7 @@ using Maze.Core;
 using Maze.Player.Data;
 using System;
 using UnityEngine;
+using Zenject;
 
 namespace Maze.Player.Components
 {
@@ -27,8 +28,9 @@ namespace Maze.Player.Components
         [SerializeField] private LayerMask wallLayer;
         [SerializeField] private LayerMask groundLayer;
 
+        [Inject] private MazeController _mazeController;
+
         private PlayerModel _model;
-        private MazeController _mazeController;
         private Transform _transform;
         private bool _isInitialized;
 
@@ -42,12 +44,14 @@ namespace Maze.Player.Components
         private void Awake()
         {
             _transform = transform;
+
+            CurrentNode = _mazeController.CentralNode;
+            _transform.position = CurrentNode.transform.position;
         }
 
-        public void Init(PlayerModel model, MazeController mazeController)
+        public void Init(PlayerModel model)
         {
             _model = model;
-            _mazeController = mazeController;
             _isInitialized = true;
         }
 

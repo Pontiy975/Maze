@@ -13,7 +13,6 @@ namespace Maze.Player
         [SerializeField] private PlayerMovementComponent movementComponent;
         [SerializeField] private PlayerAnimatorComponent animatorComponent;
 
-        [Inject] private MazeController _mazeController;
         [Inject] private GameManager _gameManager;
 
         private MovementDirection _lastDirection = MovementDirection.None;
@@ -22,9 +21,8 @@ namespace Maze.Player
         private void Start()
         {
             _transform = transform;
-            _transform.position = _mazeController.CentralNode.transform.position;
-
-            movementComponent.Init(model, _mazeController);
+            
+            movementComponent.Init(model);
             movementComponent.OnCurrentNodeChanged += OnNodeChanged;
         }
 
