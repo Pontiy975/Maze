@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenManager: {fileID: 11400000, guid: 8436835d116279f4b973d6972a07ba8d, type: 2}
+  dialogsManager: {fileID: 11400000, guid: 960f94688f0941f448babeb08ceb74f7, type: 2}

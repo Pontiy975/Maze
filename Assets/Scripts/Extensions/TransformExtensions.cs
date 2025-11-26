@@ -42,12 +42,14 @@ public static class TransformExtensions
         transform.DOScale(targetScale, duration)
                  .SetEase(Ease.OutSine)
                  .SetLoops(loops, LoopType.Yoyo)
+                 .SetUpdate(true)
                  .OnComplete(() =>
                  {
                      if (loops == 0)
                      {
                          transform.DOScale(baseScale, duration / 2f)
                                   .SetEase(Ease.InSine)
+                                  .SetUpdate(true)
                                   .OnComplete(() => onComplete?.Invoke());
                      }
                      else

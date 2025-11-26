@@ -8,11 +8,12 @@ namespace Maze.Core.PathFinders
         {
             Queue<MazeNode> queue = new();
             HashSet<MazeNode> visited = new();
-
+        
             // key - child, value - parent
             Dictionary<MazeNode, MazeNode> parents = new();
 
             queue.Enqueue(start);
+            visited.Add(start);
 
             while (queue.Count > 0)
             {
@@ -25,9 +26,9 @@ namespace Maze.Core.PathFinders
                 {
                     if (!visited.Contains(neighbor))
                     {
-                        queue.Enqueue(neighbor);
-                        parents[neighbor] = current;
                         visited.Add(neighbor);
+                        parents[neighbor] = current;
+                        queue.Enqueue(neighbor);
                     }
                 }
             }

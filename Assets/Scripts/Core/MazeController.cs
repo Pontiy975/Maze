@@ -1,5 +1,6 @@
 using Maze.Core.Data;
 using Maze.Core.Generators;
+using Maze.Core.PathFinders;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ namespace Maze.Core
 
         #region Properties
         public MazeNode CentralNode { get; private set; }
+        public List<MazeNode> BestPath { get; private set; }
         #endregion
 
         private void Awake()
@@ -22,12 +24,42 @@ namespace Maze.Core
             GenerateMaze();
         }
 
+        public MazeNode GetNodeAtWorldPosition(Vector2 worldPosition)
+        {
+            if (_grid == null || model == null || nodePrefab == null)
+                return null;
+
+            float originX = (model.Size.x - 1) * nodePrefab.Size.x / 2f;
+            float originY = (model.Size.y - 1) * nodePrefab.Size.y / 2f;
+
+            float fx = (worldPosition.x + originX) / nodePrefab.Size.x;
+            float fy = (worldPosition.y + originY) / nodePrefab.Size.y;
+
+            int ix = Mathf.RoundToInt(fx);
+            int iy = Mathf.RoundToInt(fy);
+
+            if (ix < 0 || ix >= model.Size.x || iy < 0 || iy >= model.Size.y)
+                return null;
+
+            return _grid[ix, iy];
+        }
+
+        public bool TryGetNodeAtWorldPosition(Vector2 worldPosition, out MazeNode node)
+        {
+            node = GetNodeAtWorldPosition(worldPosition);
+            return node != null;
+        }
+
+        public bool CheckExit(MazeNode node) => _exits.Contains(node);
+
         private void GenerateMaze()
         {
             CreateNodes();
             new DFSMazeGenerator().Generate(_grid, model.Size);
             MakeExits();
             CentralNode = _grid[model.Size.x / 2, model.Size.y / 2];
+
+            BestPath = new BFSPathFinder().FindPath(CentralNode, _exits);
         }
 
         private void MakeExits()
@@ -70,31 +102,5 @@ namespace Maze.Core
 
         private Vector2 GetNodePosition(int x, int y) => new(x * nodePrefab.Size.x - (model.Size.x - 1) * nodePrefab.Size.x / 2f,
                                                              y * nodePrefab.Size.y - (model.Size.y - 1) * nodePrefab.Size.y / 2f);
-
-        public MazeNode GetNodeAtWorldPosition(Vector2 worldPosition)
-        {
-            if (_grid == null || model == null || nodePrefab == null)
-                return null;
-
-            float originX = (model.Size.x - 1) * nodePrefab.Size.x / 2f;
-            float originY = (model.Size.y - 1) * nodePrefab.Size.y / 2f;
-
-            float fx = (worldPosition.x + originX) / nodePrefab.Size.x;
-            float fy = (worldPosition.y + originY) / nodePrefab.Size.y;
-
-            int ix = Mathf.RoundToInt(fx);
-            int iy = Mathf.RoundToInt(fy);
-
-            if (ix < 0 || ix >= model.Size.x || iy < 0 || iy >= model.Size.y)
-                return null;
-
-            return _grid[ix, iy];
-        }
-
-        public bool TryGetNodeAtWorldPosition(Vector2 worldPosition, out MazeNode node)
-        {
-            node = GetNodeAtWorldPosition(worldPosition);
-            return node != null;
-        }
     }
 }

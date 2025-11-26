@@ -44,9 +44,7 @@ namespace Maze.Player.Components
         private void Awake()
         {
             _transform = transform;
-
-            CurrentNode = _mazeController.CentralNode;
-            _transform.position = CurrentNode.transform.position;
+            _transform.position = _mazeController.CentralNode.transform.position;
         }
 
         public void Init(PlayerModel model)
