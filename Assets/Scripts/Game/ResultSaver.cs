@@ -48,5 +48,4 @@ namespace Maze.Game
 
         public string CompleteTime;
     }
-
 }

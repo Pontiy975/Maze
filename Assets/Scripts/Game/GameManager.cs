@@ -44,7 +44,7 @@ namespace Maze.Game
             _gameScreen.Hide();
 
             yield return null;
-            dialogsManager.OpenDialog<SettingsDialog>();
+            dialogsManager.OpenDialog<MenuDialog>();
         }
 
         private void Update()
@@ -112,6 +112,5 @@ namespace Maze.Game
                 });
             }
         }
-
     }
 }
