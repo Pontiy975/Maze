@@ -46,4 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   screenManager: {fileID: 11400000, guid: 8436835d116279f4b973d6972a07ba8d, type: 2}
   dialogsManager: {fileID: 11400000, guid: 960f94688f0941f448babeb08ceb74f7, type: 2}
+  saveData: {fileID: 11400000, guid: d8bb9c479ced8934995acfd8cae312e8, type: 2}
+  resultSaver: {fileID: 11400000, guid: b09c632ddd769244fbddbe5c7250b7ef, type: 2}
   <MazeModel>k__BackingField: {fileID: 11400000, guid: ee9b34db782e32845a882baa5d346431, type: 2}

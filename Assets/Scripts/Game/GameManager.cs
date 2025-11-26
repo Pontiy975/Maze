@@ -2,7 +2,10 @@ using Maze.Core;
 using Maze.Core.Data;
 using Maze.UI.Dialogs;
 using Maze.UI.Screens;
+using Saves;
+using System;
 using System.Collections;
+using System.Globalization;
 using UISystem.Dialogs;
 using UISystem.Screens;
 using UnityEngine;
@@ -15,6 +18,8 @@ namespace Maze.Game
     {
         [SerializeField] private ScreenManager screenManager;
         [SerializeField] private DialogsManager dialogsManager;
+        [SerializeField] private SaveData saveData;
+        [SerializeField] private ResultSaver resultSaver;
 
         [field: SerializeField] public MazeModel MazeModel { get; private set; }
 
@@ -33,10 +38,10 @@ namespace Maze.Game
 
         private IEnumerator Start()
         {
+            saveData.Init();
+
             _gameScreen = screenManager.GetScreen<GameScreen>();
             _gameScreen.Hide();
-
-            _time = 0;
 
             yield return null;
             dialogsManager.OpenDialog<SettingsDialog>();
@@ -54,26 +59,59 @@ namespace Maze.Game
             dialogsManager.ClearDialogs();
         }
 
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            if (pauseStatus)
+                saveData.SaveAll();
+        }
+
+        private void OnApplicationQuit()
+        {
+            saveData.Reset();
+        }
+
         public void AddNode(MazeNode node)
         {
             _gameScreen?.UpdateDistance(++_traveledDistance);
-
-            if (_mazeController.CheckExit(node))
-            {
-                WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
-                dialog.ShowStats(Mathf.FloorToInt(_time), _traveledDistance, _mazeController.BestPath.Count);
-            }
+            CheckExit(node);
         }
 
         public void ReloadScene()
         {
+            saveData.SaveAll();
             SceneManager.LoadScene(0);
         }
 
-        public void InitMaze(MazeConfig config)
+        public void StartGame(MazeConfig config)
         {
             _mazeController.Init(config);
             _gameScreen.Show();
+            _time = 0;
         }
+
+        private void CheckExit(MazeNode node)
+        {
+            if (_mazeController.CheckExit(node))
+            {
+                int resultTime = Mathf.FloorToInt(_time);
+
+                WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
+                dialog.ShowStats(resultTime, _traveledDistance, _mazeController.BestPath.Count);
+
+                resultSaver.AddResult(new()
+                {
+                    Width = _mazeController.Config.Size.x,
+                    Height = _mazeController.Config.Size.y,
+                    Exits = _mazeController.Config.Exits,
+
+                    Time = resultTime,
+                    Distance = _traveledDistance,
+                    BestDistance = _mazeController.BestPath.Count,
+
+                    CompleteTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+                });
+            }
+        }
+
     }
 }

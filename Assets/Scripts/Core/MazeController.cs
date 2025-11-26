@@ -16,26 +16,26 @@ namespace Maze.Core
 
         private MazeNode[,] _grid;
         private HashSet<MazeNode> _exits = new();
-        private MazeConfig _config;
 
         #region Properties
         public MazeNode CentralNode { get; private set; }
         public List<MazeNode> BestPath { get; private set; }
+        public MazeConfig Config { get; private set; }
         #endregion
 
         public void Init(MazeConfig config)
         {
-            _config = config;
+            Config = config;
             GenerateMaze();
         }
 
         public MazeNode GetNodeAtWorldPosition(Vector2 worldPosition)
         {
-            if (_grid == null || _config == null || nodePrefab == null)
+            if (_grid == null || Config == null || nodePrefab == null)
                 return null;
 
-            float originX = (_config.Size.x - 1) * nodePrefab.Size.x / 2f;
-            float originY = (_config.Size.y - 1) * nodePrefab.Size.y / 2f;
+            float originX = (Config.Size.x - 1) * nodePrefab.Size.x / 2f;
+            float originY = (Config.Size.y - 1) * nodePrefab.Size.y / 2f;
 
             float fx = (worldPosition.x + originX) / nodePrefab.Size.x;
             float fy = (worldPosition.y + originY) / nodePrefab.Size.y;
@@ -43,7 +43,7 @@ namespace Maze.Core
             int ix = Mathf.RoundToInt(fx);
             int iy = Mathf.RoundToInt(fy);
 
-            if (ix < 0 || ix >= _config.Size.x || iy < 0 || iy >= _config.Size.y)
+            if (ix < 0 || ix >= Config.Size.x || iy < 0 || iy >= Config.Size.y)
                 return null;
 
             return _grid[ix, iy];
@@ -60,9 +60,9 @@ namespace Maze.Core
         private void GenerateMaze()
         {
             CreateNodes();
-            new DFSMazeGenerator().Generate(_grid, _config.Size);
+            new DFSMazeGenerator().Generate(_grid, Config.Size);
             MakeExits();
-            CentralNode = _grid[_config.Size.x / 2, _config.Size.y / 2];
+            CentralNode = _grid[Config.Size.x / 2, Config.Size.y / 2];
 
             BestPath = new BFSPathFinder().FindPath(CentralNode, _exits);
 
@@ -71,31 +71,31 @@ namespace Maze.Core
 
         private void MakeExits()
         {
-            int targetCount = Mathf.Min(_config.Exits, 2 * _config.Size.x + 2 * (_config.Size.y - 2));
+            int targetCount = Mathf.Min(Config.Exits, 2 * Config.Size.x + 2 * (Config.Size.y - 2));
             while (_exits.Count < targetCount)
             {
                 Vector2Int position = Random.Range(0, 4) switch
                 {
-                    0 => new(0, Random.Range(0, _config.Size.y)),
-                    1 => new(_config.Size.x - 1, Random.Range(0, _config.Size.y)),
-                    2 => new(Random.Range(0, _config.Size.x), 0),
-                    _ => new(Random.Range(0, _config.Size.x), _config.Size.y - 1)
+                    0 => new(0, Random.Range(0, Config.Size.y)),
+                    1 => new(Config.Size.x - 1, Random.Range(0, Config.Size.y)),
+                    2 => new(Random.Range(0, Config.Size.x), 0),
+                    _ => new(Random.Range(0, Config.Size.x), Config.Size.y - 1)
                 };
 
                 MazeNode node = _grid[position.x, position.y];
 
-                node.MakeExit(_config.Size);
+                node.MakeExit(Config.Size);
                 _exits.Add(node);
             }
         }
 
         private void CreateNodes()
         {
-            _grid = new MazeNode[_config.Size.x, _config.Size.y];
+            _grid = new MazeNode[Config.Size.x, Config.Size.y];
 
-            for (int x = 0; x < _config.Size.x; x++)
+            for (int x = 0; x < Config.Size.x; x++)
             {
-                for (int y = 0; y < _config.Size.y; y++)
+                for (int y = 0; y < Config.Size.y; y++)
                 {
                     Vector2 position = GetNodePosition(x, y);
 
@@ -107,7 +107,7 @@ namespace Maze.Core
             }
         }
 
-        private Vector2 GetNodePosition(int x, int y) => new(x * nodePrefab.Size.x - (_config.Size.x - 1) * nodePrefab.Size.x / 2f,
-                                                             y * nodePrefab.Size.y - (_config.Size.y - 1) * nodePrefab.Size.y / 2f);
+        private Vector2 GetNodePosition(int x, int y) => new(x * nodePrefab.Size.x - (Config.Size.x - 1) * nodePrefab.Size.x / 2f,
+                                                             y * nodePrefab.Size.y - (Config.Size.y - 1) * nodePrefab.Size.y / 2f);
     }
 }
