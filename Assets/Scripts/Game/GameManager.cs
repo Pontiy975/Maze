@@ -1,7 +1,8 @@
 using Maze.Core;
+using Maze.Core.Data;
 using Maze.UI.Dialogs;
 using Maze.UI.Screens;
-using System.Collections.Generic;
+using System.Collections;
 using UISystem.Dialogs;
 using UISystem.Screens;
 using UnityEngine;
@@ -15,13 +16,14 @@ namespace Maze.Game
         [SerializeField] private ScreenManager screenManager;
         [SerializeField] private DialogsManager dialogsManager;
 
+        [field: SerializeField] public MazeModel MazeModel { get; private set; }
+
         [Inject] private MazeController _mazeController;
 
-        private List<MazeNode> _visitedNodes = new();
         private int _traveledDistance = 0;
+        private float _time;
 
         private GameScreen _gameScreen;
-        private float _time;
 
         private void Awake()
         {
@@ -29,10 +31,15 @@ namespace Maze.Game
             Time.timeScale = 1f;
         }
 
-        private void Start()
+        private IEnumerator Start()
         {
             _gameScreen = screenManager.GetScreen<GameScreen>();
+            _gameScreen.Hide();
+
             _time = 0;
+
+            yield return null;
+            dialogsManager.OpenDialog<SettingsDialog>();
         }
 
         private void Update()
@@ -49,8 +56,6 @@ namespace Maze.Game
 
         public void AddNode(MazeNode node)
         {
-            _visitedNodes.Add(node);
-            
             _gameScreen?.UpdateDistance(++_traveledDistance);
 
             if (_mazeController.CheckExit(node))
@@ -63,6 +68,12 @@ namespace Maze.Game
         public void ReloadScene()
         {
             SceneManager.LoadScene(0);
+        }
+
+        public void InitMaze(MazeConfig config)
+        {
+            _mazeController.Init(config);
+            _gameScreen.Show();
         }
     }
 }

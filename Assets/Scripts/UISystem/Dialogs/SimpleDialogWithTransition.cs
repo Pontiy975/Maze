@@ -14,9 +14,9 @@ namespace UISystem.Dialogs
             Transition = new SimpleDialogTransition(dialogRectTransform, background, animationDuration);
 
             dialogRectTransform.gameObject.SetActive(true);
-            background.gameObject.SetActive(true);
+            background?.gameObject.SetActive(true);
 
-            if (background.sprite)
+            if (background && background.sprite)
             {
                 Color color = background.color;
                 color.a = 0f;

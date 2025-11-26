@@ -10,17 +10,20 @@ namespace UISystem.Transitions
     {
         private readonly Image _background;
         private readonly Color _backgroundColor;
-        
-        public SimpleDialogTransition(RectTransform dialogRectTransform, Image background, float fadeDuration) 
+
+        public SimpleDialogTransition(RectTransform dialogRectTransform, Image background, float fadeDuration)
             : base(dialogRectTransform, fadeDuration)
         {
-            _background = background;
-            _backgroundColor = background.color;
+            if (background)
+            {
+                _background = background;
+                _backgroundColor = background.color;
+            }
         }
 
         public override IEnumerable Show(Action onEnd)
         {
-            _background.TweenAlpha(0, _backgroundColor.a, FadeDuration, Ease.OutSine);
+            _background?.TweenAlpha(0, _backgroundColor.a, FadeDuration, Ease.OutSine);
 
             
             yield return base.Show(onEnd).GetEnumerator();
@@ -28,7 +31,7 @@ namespace UISystem.Transitions
 
         public override IEnumerable Hide(Action onEnd)
         {
-            _background.TweenAlpha(_backgroundColor.a, 0, FadeDuration, Ease.InSine, true);
+            _background?.TweenAlpha(_backgroundColor.a, 0, FadeDuration, Ease.InSine, true);
 
             
             yield return base.Hide(onEnd).GetEnumerator();

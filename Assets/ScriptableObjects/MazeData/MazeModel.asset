@@ -12,5 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c80c56732d3fe3479859126dd63d7aa, type: 3}
   m_Name: MazeModel
   m_EditorClassIdentifier: 
-  <Size>k__BackingField: {x: 10, y: 10}
-  <ExitsCount>k__BackingField: 3
+  properties:
+  - <Type>k__BackingField: 0
+    <Min>k__BackingField: 5
+    <Max>k__BackingField: 10
+  - <Type>k__BackingField: 1
+    <Min>k__BackingField: 5
+    <Max>k__BackingField: 10
+  - <Type>k__BackingField: 2
+    <Min>k__BackingField: 1
+    <Max>k__BackingField: 5

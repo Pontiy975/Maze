@@ -44,7 +44,17 @@ namespace Maze.Player.Components
         private void Awake()
         {
             _transform = transform;
-            _transform.position = _mazeController.CentralNode.transform.position;
+            _mazeController.OnMazeInitialized += OnMazeInitialized;
+        }
+
+        private void OnDestroy()
+        {
+            _mazeController.OnMazeInitialized -= OnMazeInitialized;
+        }
+
+        private void Update()
+        {
+            Move();
         }
 
         public void Init(PlayerModel model)
@@ -53,9 +63,9 @@ namespace Maze.Player.Components
             _isInitialized = true;
         }
 
-        private void Update()
+        private void OnMazeInitialized()
         {
-            Move();
+            _transform.position = _mazeController.CentralNode.transform.position;
         }
 
         private void Move()
