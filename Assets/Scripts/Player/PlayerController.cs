@@ -1,4 +1,5 @@
 using Maze.Core;
+using Maze.Game;
 using Maze.Player.Components;
 using Maze.Player.Data;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Maze.Player
         [SerializeField] private PlayerAnimatorComponent animatorComponent;
 
         [Inject] private MazeController _mazeController;
+        [Inject] private GameManager _gameManager;
 
         private MovementDirection _lastDirection = MovementDirection.None;
         private Transform _transform;
@@ -23,6 +25,12 @@ namespace Maze.Player
             _transform.position = _mazeController.CentralNode.transform.position;
 
             movementComponent.Init(model, _mazeController);
+            movementComponent.OnCurrentNodeChanged += OnNodeChanged;
+        }
+
+        private void OnDestroy()
+        {
+            movementComponent.OnCurrentNodeChanged -= OnNodeChanged;
         }
 
         private void Update()
@@ -39,6 +47,11 @@ namespace Maze.Player
                 animatorComponent.SetDirection((int)current);
                 _lastDirection = current;
             }
+        }
+
+        private void OnNodeChanged()
+        {
+            _gameManager.AddNode(movementComponent.CurrentNode);
         }
     }
 }

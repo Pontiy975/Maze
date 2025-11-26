@@ -1,5 +1,6 @@
 using Maze.Core;
 using Maze.Player.Data;
+using System;
 using UnityEngine;
 
 namespace Maze.Player.Components
@@ -15,6 +16,8 @@ namespace Maze.Player.Components
 
     public class PlayerMovementComponent : MonoBehaviour
     {
+        public event Action OnCurrentNodeChanged;
+
         #region Const
         private const string HORIZONTAL_AXIS = "Horizontal";
         private const string VERTICAL_AXIS = "Vertical";
@@ -34,8 +37,7 @@ namespace Maze.Player.Components
         public MazeNode CurrentNode { get; private set; }
         #endregion
 
-        private readonly RaycastHit2D[] _forwardHits = new RaycastHit2D[1];
-        private readonly RaycastHit2D[] _downHits = new RaycastHit2D[1];
+        private readonly RaycastHit2D[] _wallHits = new RaycastHit2D[1];
 
         private void Awake()
         {
@@ -108,13 +110,19 @@ namespace Maze.Player.Components
 
         private bool RaycastForward(Vector2 direction)
         {
-            return Physics2D.RaycastNonAlloc(_transform.position, direction, _forwardHits, RAYCAST_DISTANCE, wallLayer) > 0;
+            return Physics2D.RaycastNonAlloc(_transform.position, direction, _wallHits, RAYCAST_DISTANCE, wallLayer) > 0;
         }
 
         private void DetectNode()
         {
             if (_mazeController.TryGetNodeAtWorldPosition(_transform.position, out MazeNode node))
-                node.SetState(NodeState.Player);
+            {
+                if (CurrentNode != node)
+                {
+                    CurrentNode = node;
+                    OnCurrentNodeChanged?.Invoke();
+                }
+            }
         }
     }
 }
