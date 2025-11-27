@@ -26,6 +26,7 @@ namespace Maze.Player.Components
         private const float RAYCAST_DISTANCE = 0.25f;
         #endregion
 
+        [SerializeField] private GameStateMachine gameStateMachine;
         [SerializeField] private LayerMask wallLayer;
         [SerializeField] private LayerMask groundLayer;
 
@@ -60,6 +61,14 @@ namespace Maze.Player.Components
 
         private void Update()
         {
+            if (!gameStateMachine.CheckStates(GameState.InGame))
+            {
+                if (Direction != MovementDirection.None)
+                    Direction = MovementDirection.None;
+
+                return;
+            }
+
             Move();
         }
 

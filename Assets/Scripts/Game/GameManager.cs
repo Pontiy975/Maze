@@ -25,6 +25,7 @@ namespace Maze.Game
         [SerializeField] private SaveData saveData;
         [SerializeField] private ResultSaver resultSaver;
         [SerializeField] private SessionSaver sessionSaver;
+        [SerializeField] private ParticleSystem confettiFX;
 
         [field: SerializeField] public MazeModel MazeModel { get; private set; }
 
@@ -104,27 +105,34 @@ namespace Maze.Game
         private void CheckExit(MazeNode node)
         {
             if (node.IsExit)
+                StartCoroutine(WinRoutine(node));
+        }
+
+        private IEnumerator WinRoutine(MazeNode node)
+        {
+            Instantiate(confettiFX, node.transform.position, Quaternion.identity);
+
+            gameStateMachine.SetState(GameState.Menu);
+            yield return new WaitForSeconds(2f);
+
+            int resultTime = Mathf.FloorToInt(_time);
+
+            WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
+            dialog.ShowStats(resultTime, _traveledDistance, _mazeController.BestPath.Count);
+            sessionSaver.Clear();
+
+            resultSaver.AddResult(new()
             {
-                int resultTime = Mathf.FloorToInt(_time);
-                gameStateMachine.SetState(GameState.Menu);
+                Width = _mazeController.Config.Size.x,
+                Height = _mazeController.Config.Size.y,
+                Exits = _mazeController.Config.Exits,
 
-                WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
-                dialog.ShowStats(resultTime, _traveledDistance, _mazeController.BestPath.Count);
-                sessionSaver.Clear();
+                Time = resultTime,
+                Distance = _traveledDistance,
+                BestDistance = _mazeController.BestPath.Count,
 
-                resultSaver.AddResult(new()
-                {
-                    Width = _mazeController.Config.Size.x,
-                    Height = _mazeController.Config.Size.y,
-                    Exits = _mazeController.Config.Exits,
-
-                    Time = resultTime,
-                    Distance = _traveledDistance,
-                    BestDistance = _mazeController.BestPath.Count,
-
-                    CompleteTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
-                });
-            }
+                CompleteTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
+            });
         }
 
         private void SaveSession()

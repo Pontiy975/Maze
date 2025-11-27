@@ -50,4 +50,5 @@ MonoBehaviour:
   saveData: {fileID: 11400000, guid: d8bb9c479ced8934995acfd8cae312e8, type: 2}
   resultSaver: {fileID: 11400000, guid: b09c632ddd769244fbddbe5c7250b7ef, type: 2}
   sessionSaver: {fileID: 11400000, guid: 69d5ab3e6d524f241991d1f71b2cfaa3, type: 2}
+  confettiFX: {fileID: 1499098824190719966, guid: 83ff4d1437e9fe14e8daacbb626ad936, type: 3}
   <MazeModel>k__BackingField: {fileID: 11400000, guid: ee9b34db782e32845a882baa5d346431, type: 2}

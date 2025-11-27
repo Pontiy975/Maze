@@ -109,8 +109,6 @@ namespace Maze.Core
         {
             _neighbors = neighbors;
         }
-
-        public bool HasWall(WallFlags flag) => (GetWallsSnapshot() & (byte)flag) != 0;
         #endregion
     }
 }

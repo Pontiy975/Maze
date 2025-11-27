@@ -128,8 +128,6 @@ namespace Maze.Core
 
             MazeSaveService.ApplySnapshot(_grid, Config, snapshot.Tiles);
 
-            CalculateBestPath();
-
             _exits.Clear();
             for (int x = 0; x < Config.Size.x; x++)
             {
@@ -139,7 +137,8 @@ namespace Maze.Core
                         _exits.Add(_grid[x, y]);
                 }
             }
-            
+
+            CalculateBestPath();
             OnMazeInitialized?.Invoke();
         }
         #endregion

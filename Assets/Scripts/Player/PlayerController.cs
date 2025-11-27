@@ -1,4 +1,3 @@
-using Maze.Core;
 using Maze.Game;
 using Maze.Player.Components;
 using Maze.Player.Data;
@@ -12,6 +11,7 @@ namespace Maze.Player
         [SerializeField] private PlayerModel model;
         [SerializeField] private PlayerMovementComponent movementComponent;
         [SerializeField] private PlayerAnimatorComponent animatorComponent;
+        [SerializeField] private ParticleSystem debrisFX;
 
         [Inject] private GameManager _gameManager;
 
@@ -44,6 +44,11 @@ namespace Maze.Player
             {
                 animatorComponent.SetDirection((int)current);
                 _lastDirection = current;
+
+                if (current == MovementDirection.None)
+                    debrisFX.Stop();
+                else
+                    debrisFX.Play();
             }
         }
 
