@@ -16,10 +16,10 @@ MonoBehaviour:
   properties:
   - <Type>k__BackingField: 0
     <Min>k__BackingField: 5
-    <Max>k__BackingField: 10
+    <Max>k__BackingField: 15
   - <Type>k__BackingField: 1
     <Min>k__BackingField: 5
-    <Max>k__BackingField: 10
+    <Max>k__BackingField: 15
   - <Type>k__BackingField: 2
     <Min>k__BackingField: 1
     <Max>k__BackingField: 5
