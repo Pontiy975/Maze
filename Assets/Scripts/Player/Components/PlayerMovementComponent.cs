@@ -23,7 +23,7 @@ namespace Maze.Player.Components
         #region Const
         private const string HORIZONTAL_AXIS = "Horizontal";
         private const string VERTICAL_AXIS = "Vertical";
-        private const float RAYCAST_DISTANCE = 0.25f;
+        private const float RAYCAST_DISTANCE = 0.18f;
         #endregion
 
         [SerializeField] private GameStateMachine gameStateMachine;

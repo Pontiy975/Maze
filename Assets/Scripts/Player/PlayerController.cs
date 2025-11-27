@@ -16,12 +16,9 @@ namespace Maze.Player
         [Inject] private GameManager _gameManager;
 
         private MovementDirection _lastDirection = MovementDirection.None;
-        private Transform _transform;
 
         private void Start()
         {
-            _transform = transform;
-            
             movementComponent.Init(model);
             movementComponent.OnCurrentNodeChanged += OnNodeChanged;
         }
