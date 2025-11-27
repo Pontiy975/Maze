@@ -3,6 +3,7 @@ using Maze.Game;
 using Maze.Player.Data;
 using Maze.Player.Strategies.Input;
 using System;
+using UISystem.Screens;
 using UnityEngine;
 using Zenject;
 
@@ -28,12 +29,11 @@ namespace Maze.Player.Components
         [SerializeField] private LayerMask groundLayer;
 
         [Inject] private MazeController _mazeController;
+        [Inject] private IPlayerInputStrategy _inputStrategy;
 
         private PlayerModel _model;
         private Transform _transform;
         private bool _isInitialized;
-
-        private IPlayerInputStrategy _inputStrategy;
 
         #region Properties
         public MovementDirection Direction { get; private set; } = MovementDirection.None;
@@ -47,6 +47,7 @@ namespace Maze.Player.Components
             _transform = transform;
          
             GameManager.GetPlayerPosition += GetPlayerPosition;
+            GameManager.GetWorldPlayerPosition += GetWorldPlayerPosition;
             GameManager.OnPlayerLoaded += OnPlayerLoaded;
             _mazeController.OnMazeInitialized += OnMazeInitialized;
         }
@@ -54,6 +55,7 @@ namespace Maze.Player.Components
         private void OnDestroy()
         {
             GameManager.GetPlayerPosition -= GetPlayerPosition;
+            GameManager.GetWorldPlayerPosition -= GetWorldPlayerPosition;
             GameManager.OnPlayerLoaded -= OnPlayerLoaded;
             _mazeController.OnMazeInitialized -= OnMazeInitialized;
         }
@@ -75,12 +77,6 @@ namespace Maze.Player.Components
         {
             _model = model;
             _isInitialized = true;
-
-#if UNITY_EDITOR
-            _inputStrategy = new KeyboardInputStrategy();
-#else
-            _inputStrategy = new SwipeInputStrategy();
-#endif
         }
 
         private void Move()
@@ -129,6 +125,11 @@ namespace Maze.Player.Components
                     OnCurrentNodeChanged?.Invoke();
                 }
             }
+            else
+            {
+                CurrentNode = null;
+                OnCurrentNodeChanged?.Invoke();
+            }
         }
 
         private void OnMazeInitialized()
@@ -143,5 +144,6 @@ namespace Maze.Player.Components
         }
 
         private Vector2Int GetPlayerPosition() => CurrentNode ? CurrentNode.Position : Vector2Int.zero;
+        private Vector2 GetWorldPlayerPosition() => _transform.position;
     }
 }

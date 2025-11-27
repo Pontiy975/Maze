@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   model: {fileID: 11400000, guid: 1e72f527f7f106d44a0816e3b89d5e6b, type: 2}
+  screenManager: {fileID: 11400000, guid: 8436835d116279f4b973d6972a07ba8d, type: 2}
   movementComponent: {fileID: 2220923693126892844}
   animatorComponent: {fileID: 4695623645899631645}
   debrisFX: {fileID: 8285067230618728986}

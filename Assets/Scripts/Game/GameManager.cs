@@ -1,6 +1,5 @@
 using Maze.Core;
 using Maze.Core.Data;
-using Maze.Core.Generators;
 using Maze.UI.Dialogs;
 using Maze.UI.Screens;
 using Saves;
@@ -18,6 +17,7 @@ namespace Maze.Game
     public class GameManager : MonoBehaviour
     {
         public static Func<Vector2Int> GetPlayerPosition;
+        public static Func<Vector2> GetWorldPlayerPosition;
         public static Action<Vector2Int> OnPlayerLoaded;
 
         [SerializeField] private GameStateMachine gameStateMachine;
@@ -84,8 +84,10 @@ namespace Maze.Game
 
         public void AddNode(MazeNode node)
         {
-            _gameScreen?.UpdateDistance(++_traveledDistance);
-            CheckExit(node);
+            if (node)
+                _gameScreen?.UpdateDistance(++_traveledDistance);
+            else
+                StartCoroutine(WinRoutine());
         }
 
         public void ReloadScene()
@@ -103,25 +105,20 @@ namespace Maze.Game
             _time = 0;
         }
 
-        private void CheckExit(MazeNode node)
+        private IEnumerator WinRoutine()
         {
-            if (node.IsExit)
-                StartCoroutine(WinRoutine(node));
-        }
-
-        private IEnumerator WinRoutine(MazeNode node)
-        {
-            Instantiate(confettiFX, node.transform.position, Quaternion.identity);
+            Instantiate(confettiFX, GetWorldPlayerPosition.Invoke(), Quaternion.identity);
 
             gameStateMachine.SetState(GameState.Menu);
+            
             yield return new WaitForSeconds(2f);
 
             int resultTime = Mathf.FloorToInt(_time);
 
             WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
             dialog.ShowStats(resultTime, _traveledDistance, _mazeController.BestPath.Count);
+            
             sessionSaver.Clear();
-
             resultSaver.AddResult(new()
             {
                 Width = _mazeController.Config.Size.x,

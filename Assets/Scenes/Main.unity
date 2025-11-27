@@ -260,8 +260,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1866f313cb419944a83ee956b643d3b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvasRect: {fileID: 960603779}
   gameManagerPrefab: {fileID: 673402251165745365, guid: 26dac7f6c3edcf54f8fbf4d1fa932cf5, type: 3}
   playerPrefab: {fileID: 6841678069486218615, guid: 9423b01cf71b96f469f7635ba5f1bdcf, type: 3}
+  joystickPrefab: {fileID: 3359262001852335553, guid: 01ae6b5173441164c9dafd0ef222b490, type: 3}
 --- !u!1001 &403408154
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1391,6 +1393,7 @@ MonoBehaviour:
   transitionDuration: 0.3
   screenManager: {fileID: 11400000, guid: 8436835d116279f4b973d6972a07ba8d, type: 2}
   dialogsManager: {fileID: 11400000, guid: 960f94688f0941f448babeb08ceb74f7, type: 2}
+  <Joystick>k__BackingField: {fileID: 0}
   counters:
     _keys: 0000000001000000
     _values:

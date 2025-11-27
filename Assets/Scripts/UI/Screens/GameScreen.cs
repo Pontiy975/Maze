@@ -1,4 +1,3 @@
-using TMPro;
 using UISystem.Dialogs;
 using UISystem.Screens;
 using UISystem.Transitions;
@@ -10,6 +9,7 @@ namespace Maze.UI.Screens
     public class GameScreen : BaseScreen
     {
         [SerializeField] private DialogsManager dialogsManager;
+        [field: SerializeField] public CustomJoystick Joystick { get; private set; }
         [SerializeField] private SerializableDictionaryBase<CounterType, Counter> counters;
         protected override ITransition Transition { get; set; }
 
