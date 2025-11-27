@@ -4,7 +4,9 @@ using Maze.Core.PathFinders;
 using Maze.Game;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
+using Utils;
 using Zenject;
 using Random = UnityEngine.Random;
 
@@ -30,6 +32,8 @@ namespace Maze.Core
         public void Init(MazeConfig config)
         {
             Config = config;
+            CameraScaler.ScaleCamera(config.Size);
+
             GenerateMaze();
         }
 
@@ -126,6 +130,7 @@ namespace Maze.Core
         public void ApplySnapshot(SessionSaveData snapshot)
         {
             Config = MazeConfigFactory.Create(new(snapshot.Width, snapshot.Height), snapshot.Exits);
+            CameraScaler.ScaleCamera(Config.Size);
 
             CreateNodes();
 
