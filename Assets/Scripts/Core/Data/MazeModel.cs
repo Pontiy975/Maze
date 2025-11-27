@@ -10,9 +10,17 @@ namespace Maze.Core.Data
         Exits
     }
 
+    public enum MazeAlgorithm
+    {
+        DFS,
+        BinaryTree,
+        Prims,
+    }
+
     [CreateAssetMenu(fileName = "MazeModel", menuName = "ScriptableObjects/MazeData/MazeModel")]
     public class MazeModel : ScriptableObject
     {
+        [field: SerializeField] public MazeAlgorithm Algorithm { get; private set; }
         [SerializeField] private PropertyData[] properties;
 
         public PropertyData this[PropertyType t]

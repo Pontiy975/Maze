@@ -24,10 +24,10 @@ namespace Maze.Core
         public MazeConfig Config { get; private set; }
         #endregion
 
-        public void Init(MazeConfig config)
+        public void Init(MazeConfig config, IMazeGenerator generator)
         {
             Config = config;
-            GenerateMaze();
+            GenerateMaze(generator);
         }
 
         public MazeNode GetNode(Vector2Int position) => _grid[position.x, position.y];
@@ -58,11 +58,11 @@ namespace Maze.Core
             return node != null;
         }
 
-        private void GenerateMaze()
+        private void GenerateMaze(IMazeGenerator generator)
         {
             CreateNodes();
 
-            new DFSMazeGenerator().Generate(_grid, Config.Size);
+            generator.Generate(_grid, Config.Size);
 
             MakeExits();
             CalculateBestPath();

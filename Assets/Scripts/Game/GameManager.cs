@@ -1,5 +1,6 @@
 using Maze.Core;
 using Maze.Core.Data;
+using Maze.Core.Generators;
 using Maze.UI.Dialogs;
 using Maze.UI.Screens;
 using Saves;
@@ -98,7 +99,7 @@ namespace Maze.Game
             gameStateMachine.SetState(GameState.InGame);
             _gameScreen.Show();
 
-            _mazeController.Init(config);
+            _mazeController.Init(config, MazeGeneratorFactory.CreateGenerator(MazeModel.Algorithm));
             _time = 0;
         }
 
