@@ -140,10 +140,7 @@ namespace Maze.Game
 
             SessionSaveData snapshot = sessionSaver.SessionSaveData;
 
-            Vector2Int mazeSize = new(snapshot.Width, snapshot.Height);
-            MazeConfig config = MazeConfigFactory.Create(mazeSize, snapshot.Exits);
-            
-            _mazeController.ApplySnapshot(config, snapshot.Tiles);
+            _mazeController.ApplySnapshot(snapshot);
             OnPlayerLoaded?.Invoke(new(snapshot.PlayerX, snapshot.PlayerY));
 
             _time = snapshot.Time;
