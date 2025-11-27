@@ -1,3 +1,4 @@
+using Maze.Game;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Maze.Core
         #region Properties
         public Vector2 Size => sprite.bounds.size;
         public Vector2Int Position { get; private set; }
+        public bool IsExit { get; private set; }
         public IReadOnlyCollection<MazeNode> Neighbors => _neighbors;
         public NodeState State { get; private set; }
         #endregion
@@ -60,6 +62,8 @@ namespace Maze.Core
 
         public void MakeExit(Vector2Int size)
         {
+            IsExit = true;
+
             if (Position.x == 0)
                 walls[3].SetActive(false);
             else if (Position.x == size.x - 1)
@@ -69,5 +73,44 @@ namespace Maze.Core
             else
                 walls[0].SetActive(false);
         }
+
+        #region Save/Load
+        public byte GetWallsSnapshot()
+        {
+            byte snapshot = 0;
+
+            if (walls[0].activeInHierarchy) snapshot |= (byte)WallFlags.Up;
+            if (walls[1].activeInHierarchy) snapshot |= (byte)WallFlags.Right;
+            if (walls[2].activeInHierarchy) snapshot |= (byte)WallFlags.Down;
+            if (walls[3].activeInHierarchy) snapshot |= (byte)WallFlags.Left;
+
+            return snapshot;
+        }
+
+        public void ApplyWallsSnapshot(byte snapshot)
+        {
+            walls[0].SetActive((snapshot & (byte)WallFlags.Up) != 0);
+            walls[1].SetActive((snapshot & (byte)WallFlags.Right) != 0);
+            walls[2].SetActive((snapshot & (byte)WallFlags.Down) != 0);
+            walls[3].SetActive((snapshot & (byte)WallFlags.Left) != 0);
+        }
+
+        public List<(int, int)> GetNeighborsSnapshot()
+        {
+            List<(int x, int y)> list = new();
+
+            foreach (var neighbor in _neighbors)
+                list.Add((neighbor.Position.x, neighbor.Position.y));
+
+            return list;
+        }
+
+        public void ApplyNeighborsSnapshot(HashSet<MazeNode> neighbors)
+        {
+            _neighbors = neighbors;
+        }
+
+        public bool HasWall(WallFlags flag) => (GetWallsSnapshot() & (byte)flag) != 0;
+        #endregion
     }
 }

@@ -16,10 +16,15 @@ namespace Maze.Game
 {
     public class GameManager : MonoBehaviour
     {
+        public static Func<Vector2Int> GetPlayerPosition;
+        public static Action<Vector2Int> OnPlayerLoaded;
+
+        [SerializeField] private GameStateMachine gameStateMachine;
         [SerializeField] private ScreenManager screenManager;
         [SerializeField] private DialogsManager dialogsManager;
         [SerializeField] private SaveData saveData;
         [SerializeField] private ResultSaver resultSaver;
+        [SerializeField] private SessionSaver sessionSaver;
 
         [field: SerializeField] public MazeModel MazeModel { get; private set; }
 
@@ -39,6 +44,7 @@ namespace Maze.Game
         private IEnumerator Start()
         {
             saveData.Init();
+            gameStateMachine.SetState(GameState.Menu);
 
             _gameScreen = screenManager.GetScreen<GameScreen>();
             _gameScreen.Hide();
@@ -62,11 +68,15 @@ namespace Maze.Game
         private void OnApplicationPause(bool pauseStatus)
         {
             if (pauseStatus)
+            {
+                SaveSession();
                 saveData.SaveAll();
+            }
         }
 
         private void OnApplicationQuit()
         {
+            SaveSession();
             saveData.Reset();
         }
 
@@ -84,19 +94,23 @@ namespace Maze.Game
 
         public void StartGame(MazeConfig config)
         {
-            _mazeController.Init(config);
+            gameStateMachine.SetState(GameState.InGame);
             _gameScreen.Show();
+
+            _mazeController.Init(config);
             _time = 0;
         }
 
         private void CheckExit(MazeNode node)
         {
-            if (_mazeController.CheckExit(node))
+            if (node.IsExit)
             {
                 int resultTime = Mathf.FloorToInt(_time);
+                gameStateMachine.SetState(GameState.Menu);
 
                 WinDialog dialog = dialogsManager.OpenDialog<WinDialog>();
                 dialog.ShowStats(resultTime, _traveledDistance, _mazeController.BestPath.Count);
+                sessionSaver.Clear();
 
                 resultSaver.AddResult(new()
                 {
@@ -111,6 +125,31 @@ namespace Maze.Game
                     CompleteTime = DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)
                 });
             }
+        }
+
+        private void SaveSession()
+        {
+            if (gameStateMachine.CheckStates(GameState.InGame))
+                sessionSaver.SaveSession(_mazeController.GetSnapshot(), _traveledDistance, Mathf.FloorToInt(_time), GetPlayerPosition.Invoke());
+        }
+
+        public void LoadSession()
+        {
+            gameStateMachine.SetState(GameState.InGame);
+            _gameScreen?.Show();
+
+            SessionSaveData snapshot = sessionSaver.SessionSaveData;
+
+            Vector2Int mazeSize = new(snapshot.Width, snapshot.Height);
+            MazeConfig config = MazeConfigFactory.Create(mazeSize, snapshot.Exits);
+            
+            _mazeController.ApplySnapshot(config, snapshot.Tiles);
+            OnPlayerLoaded?.Invoke(new(snapshot.PlayerX, snapshot.PlayerY));
+
+            _time = snapshot.Time;
+
+            _traveledDistance = snapshot.Distance;
+            _gameScreen?.UpdateDistance(_traveledDistance);
         }
     }
 }

@@ -28,7 +28,8 @@ namespace Maze.UI.Dialogs
             playButton.onClick.AddListener(() =>
             {
                 Vector2Int size = new(properties[PropertyType.Width].Value, properties[PropertyType.Height].Value);
-                _gameManager.StartGame(new(size, properties[PropertyType.Exits].Value));
+                MazeConfig config = MazeConfigFactory.Create(size, properties[PropertyType.Exits].Value);
+                _gameManager.StartGame(config);
 
                 Hide();
             });

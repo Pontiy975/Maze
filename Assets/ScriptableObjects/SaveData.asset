@@ -14,6 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   models:
   - {fileID: 11400000, guid: b09c632ddd769244fbddbe5c7250b7ef, type: 2}
+  - {fileID: 11400000, guid: 69d5ab3e6d524f241991d1f71b2cfaa3, type: 2}
   savedData:
-    _keys: []
-    _values: []
+    _keys:
+    - ResultSaveData
+    _values:
+    - '{"Results":[{"Width":5,"Height":5,"Exits":1,"Time":2,"Distance":4,"BestDistance":4,"CompleteTime":"11/26/2025
+      20:20:24"},{"Width":5,"Height":5,"Exits":1,"Time":2,"Distance":4,"BestDistance":4,"CompleteTime":"11/26/2025
+      20:20:24"},{"Width":5,"Height":5,"Exits":1,"Time":2,"Distance":4,"BestDistance":4,"CompleteTime":"11/26/2025
+      20:20:24"},{"Width":5,"Height":5,"Exits":1,"Time":2,"Distance":4,"BestDistance":4,"CompleteTime":"11/26/2025
+      20:20:24"},{"Width":10,"Height":10,"Exits":3,"Time":8,"Distance":14,"BestDistance":14,"CompleteTime":"11/26/2025
+      20:21:02"},{"Width":5,"Height":5,"Exits":1,"Time":6,"Distance":8,"BestDistance":6,"CompleteTime":"11/26/2025
+      21:06:00"}]}'

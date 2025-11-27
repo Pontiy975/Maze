@@ -37,16 +37,4 @@ namespace Maze.Core.Data
         [field: SerializeField] public int Min { get; private set; }
         [field: SerializeField] public int Max { get; private set; }
     }
-
-    public class MazeConfig
-    {
-        public Vector2Int Size { get; private set; }
-        public int Exits { get; private set; }
-
-        public MazeConfig(Vector2Int size, int exits)
-        {
-            Size = size;
-            Exits = exits;
-        }
-    }
 }

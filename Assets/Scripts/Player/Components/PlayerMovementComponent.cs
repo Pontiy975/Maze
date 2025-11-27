@@ -1,4 +1,5 @@
 using Maze.Core;
+using Maze.Game;
 using Maze.Player.Data;
 using System;
 using UnityEngine;
@@ -44,11 +45,16 @@ namespace Maze.Player.Components
         private void Awake()
         {
             _transform = transform;
+         
+            GameManager.GetPlayerPosition += GetPlayerPosition;
+            GameManager.OnPlayerLoaded += OnPlayerLoaded;
             _mazeController.OnMazeInitialized += OnMazeInitialized;
         }
 
         private void OnDestroy()
         {
+            GameManager.GetPlayerPosition -= GetPlayerPosition;
+            GameManager.OnPlayerLoaded -= OnPlayerLoaded;
             _mazeController.OnMazeInitialized -= OnMazeInitialized;
         }
 
@@ -61,11 +67,6 @@ namespace Maze.Player.Components
         {
             _model = model;
             _isInitialized = true;
-        }
-
-        private void OnMazeInitialized()
-        {
-            _transform.position = _mazeController.CentralNode.transform.position;
         }
 
         private void Move()
@@ -136,5 +137,18 @@ namespace Maze.Player.Components
                 }
             }
         }
+
+        private void OnMazeInitialized()
+        {
+            _transform.position = _mazeController.CentralNode.transform.position;
+        }
+
+        private void OnPlayerLoaded(Vector2Int position)
+        {
+            CurrentNode = _mazeController.GetNode(position);
+            _transform.position = CurrentNode.transform.position;
+        }
+
+        private Vector2Int GetPlayerPosition() => CurrentNode ? CurrentNode.Position : Vector2Int.zero;
     }
 }

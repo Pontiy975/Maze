@@ -1,7 +1,9 @@
 using Maze.Core.Data;
 using Maze.Core.Generators;
 using Maze.Core.PathFinders;
+using Maze.Game;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,6 +31,8 @@ namespace Maze.Core
             GenerateMaze();
         }
 
+        public MazeNode GetNode(Vector2Int position) => _grid[position.x, position.y];
+
         public MazeNode GetNodeAtWorldPosition(Vector2 worldPosition)
         {
             if (_grid == null || Config == null || nodePrefab == null)
@@ -55,12 +59,12 @@ namespace Maze.Core
             return node != null;
         }
 
-        public bool CheckExit(MazeNode node) => _exits.Contains(node);
-
         private void GenerateMaze()
         {
             CreateNodes();
+
             new DFSMazeGenerator().Generate(_grid, Config.Size);
+
             MakeExits();
             CentralNode = _grid[Config.Size.x / 2, Config.Size.y / 2];
 
@@ -102,12 +106,73 @@ namespace Maze.Core
                     _grid[x, y] = Instantiate(nodePrefab, position, Quaternion.identity, transform);
                     _grid[x, y].name += $" [{x},{y}]";
 
-                    _grid[x, y].SetPosition(new Vector2Int(x, y));
+                    _grid[x, y].SetPosition(new(x, y));
                 }
             }
         }
 
         private Vector2 GetNodePosition(int x, int y) => new(x * nodePrefab.Size.x - (Config.Size.x - 1) * nodePrefab.Size.x / 2f,
                                                              y * nodePrefab.Size.y - (Config.Size.y - 1) * nodePrefab.Size.y / 2f);
+
+        #region Save/Load
+        public (MazeConfig config, List<TileSaveData>) GetSnapshot()
+        {
+            List<TileSaveData> tilesData = new();
+
+            for (int x = 0; x < Config.Size.x; x++)
+            {
+                for (int y = 0; y < Config.Size.y; y++)
+                {
+                    tilesData.Add(new()
+                    {
+                        X = x,
+                        Y = y,
+                        Walls = _grid[x, y].GetWallsSnapshot(),
+                        IsExit = _grid[x, y].IsExit,
+                        Neighbors = _grid[x, y].GetNeighborsSnapshot(),
+                    });
+                }
+            }
+
+            return (Config, tilesData);
+        }
+
+        public void ApplySnapshot(MazeConfig config, List<TileSaveData> tilesData)
+        {
+            Config = config;
+            CreateNodes();
+
+            for (int x = 0; x < Config.Size.x; x++)
+            {
+                for (int y = 0; y < Config.Size.y; y++)
+                {
+                    TileSaveData data = tilesData.Find(t => t.X == x && t.Y == y);
+                    if (data != null)
+                    {
+                        MazeNode node = _grid[x, y];
+                        node.ApplyWallsSnapshot(data.Walls);
+
+                        HashSet<MazeNode> neighbors = new();
+                        foreach (var neighbor in data.Neighbors)
+                        {
+                            neighbors.Add(_grid[neighbor.x, neighbor.y]);
+                        }
+                        node.ApplyNeighborsSnapshot(neighbors);
+                        
+                        if (data.IsExit)
+                        {
+                            node.MakeExit(Config.Size);
+                            _exits.Add(node);
+                        }
+                    }
+                }
+            }
+            
+            CentralNode = _grid[Config.Size.x / 2, Config.Size.y / 2];
+            BestPath = new BFSPathFinder().FindPath(CentralNode, _exits);
+            Debug.Log(BestPath.Count);
+            OnMazeInitialized?.Invoke();
+        }
+        #endregion
     }
 }

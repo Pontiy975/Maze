@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Maze.Game
 {
-    [CreateAssetMenu(fileName = "ResultSaver", menuName = "ScriptableObjects/ResultSaver")]
+    [CreateAssetMenu(fileName = "ResultSaver", menuName = "ScriptableObjects/Game/ResultSaver")]
     public class ResultSaver : SaveableModel
     {
         public List<ResultEntry> Results { get; private set; }
