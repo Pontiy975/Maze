@@ -99,7 +99,7 @@ namespace Maze.Game
             gameStateMachine.SetState(GameState.InGame);
             _gameScreen.Show();
 
-            _mazeController.Init(config, MazeGeneratorFactory.CreateGenerator(MazeModel.Algorithm));
+            _mazeController.Init(config);
             _time = 0;
         }
 

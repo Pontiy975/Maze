@@ -5,6 +5,7 @@ using Maze.Game;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 using Random = UnityEngine.Random;
 
 namespace Maze.Core
@@ -15,6 +16,8 @@ namespace Maze.Core
 
         [SerializeField] private MazeNode nodePrefab;
 
+        [Inject] private IMazeGenerator _generator;
+
         private MazeNode[,] _grid;
         private HashSet<MazeNode> _exits = new();
 
@@ -24,10 +27,10 @@ namespace Maze.Core
         public MazeConfig Config { get; private set; }
         #endregion
 
-        public void Init(MazeConfig config, IMazeGenerator generator)
+        public void Init(MazeConfig config)
         {
             Config = config;
-            GenerateMaze(generator);
+            GenerateMaze();
         }
 
         public MazeNode GetNode(Vector2Int position) => _grid[position.x, position.y];
@@ -58,11 +61,11 @@ namespace Maze.Core
             return node != null;
         }
 
-        private void GenerateMaze(IMazeGenerator generator)
+        private void GenerateMaze()
         {
             CreateNodes();
 
-            generator.Generate(_grid, Config.Size);
+            _generator.Generate(_grid, Config.Size);
 
             MakeExits();
             CalculateBestPath();

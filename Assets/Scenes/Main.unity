@@ -1039,6 +1039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd870cabe74250746b4ddd749a145aa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mazeModel: {fileID: 11400000, guid: ee9b34db782e32845a882baa5d346431, type: 2}
   controllerPrefab: {fileID: 1947777306142397902, guid: 2a3360ab9142f244f814cc1cb4818e94, type: 3}
 --- !u!4 &1535470534
 Transform:
