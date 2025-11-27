@@ -1,6 +1,7 @@
 using Maze.Core;
 using Maze.Game;
 using Maze.Player.Data;
+using Maze.Player.Strategies.Input;
 using System;
 using UnityEngine;
 using Zenject;
@@ -20,11 +21,7 @@ namespace Maze.Player.Components
     {
         public event Action OnCurrentNodeChanged;
 
-        #region Const
-        private const string HORIZONTAL_AXIS = "Horizontal";
-        private const string VERTICAL_AXIS = "Vertical";
         private const float RAYCAST_DISTANCE = 0.18f;
-        #endregion
 
         [SerializeField] private GameStateMachine gameStateMachine;
         [SerializeField] private LayerMask wallLayer;
@@ -35,6 +32,8 @@ namespace Maze.Player.Components
         private PlayerModel _model;
         private Transform _transform;
         private bool _isInitialized;
+
+        private IPlayerInputStrategy _inputStrategy;
 
         #region Properties
         public MovementDirection Direction { get; private set; } = MovementDirection.None;
@@ -76,6 +75,12 @@ namespace Maze.Player.Components
         {
             _model = model;
             _isInitialized = true;
+
+#if UNITY_EDITOR
+            _inputStrategy = new KeyboardInputStrategy();
+#else
+            _inputStrategy = new SwipeInputStrategy();
+#endif
         }
 
         private void Move()
@@ -83,39 +88,18 @@ namespace Maze.Player.Components
             if (!_isInitialized)
                 return;
 
-            SetDirection();
+            Direction = _inputStrategy.GetDirection();
 
             if (Direction == MovementDirection.None)
                 return;
 
-            Vector2 direction = GetDirectionVector();
-            
-            if (RaycastForward(direction))
+            Vector2 dir = GetDirectionVector();
+
+            if (RaycastForward(dir))
                 return;
-            
-            _transform.Translate(_model.Speed * Time.deltaTime * direction);
+
+            _transform.Translate(_model.Speed * Time.deltaTime * dir);
             DetectNode();
-        }
-
-        private void SetDirection()
-        {
-            float horizontal = Input.GetAxisRaw(HORIZONTAL_AXIS);
-            float vertical = Input.GetAxisRaw(VERTICAL_AXIS);
-
-            if (horizontal == 0 && vertical == 0)
-            {
-                Direction = MovementDirection.None;
-                return;
-            }
-
-            if (vertical != 0)
-            {
-                Direction = vertical > 0 ? MovementDirection.Up : MovementDirection.Down;
-                return;
-            }
-
-            if (horizontal != 0)
-                Direction = horizontal > 0 ? MovementDirection.Right : MovementDirection.Left;
         }
 
         private Vector2 GetDirectionVector()
