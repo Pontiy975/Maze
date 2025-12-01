@@ -8,7 +8,6 @@ namespace Maze.Core
     {
         Available,
         Visited,
-        Player
     }
 
     public class MazeNode : MonoBehaviour
@@ -36,8 +35,6 @@ namespace Maze.Core
         public void SetPosition(Vector2Int position) => Position = position;
         public void SetState(NodeState state)
         {
-            if (state == NodeState.Player)
-                sprite.color = Color.red;
             State = state;
         }
 
