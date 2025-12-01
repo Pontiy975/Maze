@@ -4,12 +4,6 @@ using UnityEngine;
 
 namespace Maze.Core
 {
-    public enum NodeState
-    {
-        Available,
-        Visited,
-    }
-
     public class MazeNode : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer sprite;
@@ -29,15 +23,10 @@ namespace Maze.Core
         public Vector2Int Position { get; private set; }
         public bool IsExit { get; private set; }
         public IReadOnlyCollection<MazeNode> Neighbors => _neighbors;
-        public NodeState State { get; private set; }
         #endregion
 
         public void SetPosition(Vector2Int position) => Position = position;
-        public void SetState(NodeState state)
-        {
-            State = state;
-        }
-
+        
         public void Connect(MazeNode node)
         {
             _neighbors.Add(node);

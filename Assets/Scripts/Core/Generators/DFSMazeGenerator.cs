@@ -5,6 +5,8 @@ namespace Maze.Core.Generators
 {
     public class DFSMazeGenerator : IMazeGenerator
     {
+        private readonly HashSet<MazeNode> _visited = new();
+
         public void Generate(MazeNode[,] grid, Vector2Int size)
         {
             Stack<MazeNode> currentPath = new();
@@ -18,7 +20,7 @@ namespace Maze.Core.Generators
             while (currentPath.Count > 0)
             {
                 currentNode = currentPath.Peek();
-                currentNode.SetState(NodeState.Visited);
+                _visited.Add(currentNode);
 
                 List<Vector2Int> neighbors = GetAvailableNeighbors(grid, size, currentNode.Position);
 
@@ -43,7 +45,7 @@ namespace Maze.Core.Generators
 
             void TryAddNeighbor(int x, int y)
             {
-                if (x >= 0 && x < size.x && y >= 0 && y < size.y && grid[x, y].State == NodeState.Available)
+                if (x >= 0 && x < size.x && y >= 0 && y < size.y && !_visited.Contains(grid[x, y]))
                     result.Add(new Vector2Int(x, y));
             }
 

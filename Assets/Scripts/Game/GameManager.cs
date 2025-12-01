@@ -8,10 +8,8 @@ using System.Collections;
 using System.Globalization;
 using UISystem.Dialogs;
 using UISystem.Screens;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Utils;
 using Zenject;
 
 namespace Maze.Game

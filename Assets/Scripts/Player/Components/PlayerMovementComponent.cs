@@ -3,7 +3,6 @@ using Maze.Game;
 using Maze.Player.Data;
 using Maze.Player.Strategies.Input;
 using System;
-using UISystem.Screens;
 using UnityEngine;
 using Zenject;
 

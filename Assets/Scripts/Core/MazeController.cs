@@ -1,10 +1,10 @@
 using Maze.Core.Data;
+using Maze.Core.Factories;
 using Maze.Core.Generators;
 using Maze.Core.PathFinders;
 using Maze.Game;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using Utils;
 using Zenject;
@@ -16,12 +16,14 @@ namespace Maze.Core
     {
         public event Action OnMazeInitialized;
 
-        [SerializeField] private MazeNode nodePrefab;
-
+        [Inject] private MazeNode _nodePrefab;
         [Inject] private IMazeGenerator _generator;
+        [Inject] private IMazeNodeFactory _factory;
 
         private MazeNode[,] _grid;
         private HashSet<MazeNode> _exits = new();
+        private HashSet<MazeNode> _crossroads = new();
+        private HashSet<MazeNode> _deadEnds = new();
 
         #region Properties
         public MazeNode CentralNode { get; private set; }
@@ -41,14 +43,14 @@ namespace Maze.Core
 
         public MazeNode GetNodeAtWorldPosition(Vector2 worldPosition)
         {
-            if (_grid == null || Config == null || nodePrefab == null)
+            if (_grid == null || Config == null || _nodePrefab == null)
                 return null;
 
-            float originX = (Config.Size.x - 1) * nodePrefab.Size.x / 2f;
-            float originY = (Config.Size.y - 1) * nodePrefab.Size.y / 2f;
+            float originX = (Config.Size.x - 1) * _nodePrefab.Size.x / 2f;
+            float originY = (Config.Size.y - 1) * _nodePrefab.Size.y / 2f;
 
-            float fx = (worldPosition.x + originX) / nodePrefab.Size.x;
-            float fy = (worldPosition.y + originY) / nodePrefab.Size.y;
+            float fx = (worldPosition.x + originX) / _nodePrefab.Size.x;
+            float fy = (worldPosition.y + originY) / _nodePrefab.Size.y;
 
             int ix = Mathf.RoundToInt(fx);
             int iy = Mathf.RoundToInt(fy);
@@ -73,6 +75,23 @@ namespace Maze.Core
 
             MakeExits();
             CalculateBestPath();
+
+            for (int x = 0; x < Config.Size.x; x++)
+            {
+                for (int y = 0; y < Config.Size.y; y++)
+                {
+                    switch (_grid[x, y].Neighbors.Count)
+                    {
+                        case 1:
+                            _deadEnds.Add(_grid[x, y]);
+                            break;
+                        case 3:
+                        case 4:
+                            _crossroads.Add(_grid[x, y]);
+                            break;
+                    }
+                }
+            }
 
             OnMazeInitialized?.Invoke();
         }
@@ -105,18 +124,10 @@ namespace Maze.Core
             {
                 for (int y = 0; y < Config.Size.y; y++)
                 {
-                    Vector2 position = GetNodePosition(x, y);
-
-                    _grid[x, y] = Instantiate(nodePrefab, position, Quaternion.identity, transform);
-                    _grid[x, y].name += $" [{x},{y}]";
-
-                    _grid[x, y].SetPosition(new(x, y));
+                    _grid[x, y] = _factory.Create(Config.Size, new(x, y), transform);
                 }
             }
         }
-
-        private Vector2 GetNodePosition(int x, int y) => new(x * nodePrefab.Size.x - (Config.Size.x - 1) * nodePrefab.Size.x / 2f,
-                                                             y * nodePrefab.Size.y - (Config.Size.y - 1) * nodePrefab.Size.y / 2f);
 
         private void CalculateBestPath()
         {

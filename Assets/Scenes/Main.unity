@@ -1323,6 +1323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mazeModel: {fileID: 11400000, guid: ee9b34db782e32845a882baa5d346431, type: 2}
+  nodePrefab: {fileID: 2591846016310084452, guid: e3b400f2ad7abcd4f8ea355f0a8afd69, type: 3}
   controllerPrefab: {fileID: 1947777306142397902, guid: 2a3360ab9142f244f814cc1cb4818e94, type: 3}
 --- !u!4 &1535470534
 Transform:
